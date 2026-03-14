@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Prompt } from '@/lib/fetchPrompts';
 import PromptCard from './PromptCard';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -12,8 +12,9 @@ interface PromptGalleryProps {
 }
 
 export default function PromptGallery({ prompts }: PromptGalleryProps) {
+  const LIKES_ENABLED = false;
   const [selectedUniverso, setSelectedUniverso] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<'popular' | 'recent'>('popular');
+  const [sortBy, setSortBy] = useState<'popular' | 'recent'>('recent');
   const { lang } = useLanguage();
   const t = messages[lang].prompts;
   const { toggleLike, getLikeCount, isLiked, likes } = useLikes();
@@ -77,6 +78,7 @@ export default function PromptGallery({ prompts }: PromptGalleryProps) {
         </div>
 
         {/* Sort Toggle */}
+        {LIKES_ENABLED && (
         <div className="flex items-center gap-1 bg-white border border-pink-100 rounded-full p-1 self-start sm:self-auto">
           <button
             onClick={() => setSortBy('popular')}
@@ -101,26 +103,71 @@ export default function PromptGallery({ prompts }: PromptGalleryProps) {
             {t.sortRecent}
           </button>
         </div>
+        )}
       </div>
 
       {/* Gallery */}
       {filteredPrompts.length > 0 ? (
-        <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-3 xl:columns-4 gap-3 sm:gap-4">
-          {filteredPrompts.map((prompt) => (
-            <PromptCard
-              key={prompt.id}
-              prompt={prompt}
-              likeCount={getLikeCount(prompt.id)}
-              isLiked={isLiked(prompt.id)}
-              onToggleLike={toggleLike}
-            />
-          ))}
-        </div>
+        <MasonryGrid prompts={filteredPrompts} getLikeCount={getLikeCount} isLiked={isLiked} toggleLike={toggleLike} likesEnabled={LIKES_ENABLED} />
       ) : (
         <div className="text-center py-20">
           <p className="text-xl text-gray-500">{t.empty}</p>
         </div>
       )}
+    </div>
+  );
+}
+
+// Masonry grid: distributes items left-to-right (round-robin) across columns
+function MasonryGrid({ prompts, getLikeCount, isLiked, toggleLike, likesEnabled }: {
+  prompts: Prompt[];
+  getLikeCount: (id: string) => number;
+  isLiked: (id: string) => boolean;
+  toggleLike: (id: string) => void;
+  likesEnabled: boolean;
+}) {
+  const useColumns = useCallback(() => {
+    if (typeof window === 'undefined') return 2;
+    const w = window.innerWidth;
+    if (w >= 1280) return 4;
+    if (w >= 768) return 3;
+    return 2;
+  }, []);
+
+  const [colCount, setColCount] = useState(useColumns);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => setColCount(useColumns());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [useColumns]);
+
+  // Round-robin distribution: item 0 → col 0, item 1 → col 1, etc.
+  const columns = useMemo(() => {
+    const cols: Prompt[][] = Array.from({ length: colCount }, () => []);
+    prompts.forEach((prompt, i) => {
+      cols[i % colCount].push(prompt);
+    });
+    return cols;
+  }, [prompts, colCount]);
+
+  return (
+    <div className="flex gap-3 sm:gap-4">
+      {columns.map((col, colIdx) => (
+        <div key={colIdx} className="flex-1 flex flex-col gap-3 sm:gap-4">
+          {col.map((prompt) => (
+            <PromptCard
+              key={prompt.id}
+              prompt={prompt}
+              likeCount={likesEnabled ? getLikeCount(prompt.id) : 0}
+              isLiked={likesEnabled ? isLiked(prompt.id) : false}
+              onToggleLike={toggleLike}
+              likesEnabled={likesEnabled}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

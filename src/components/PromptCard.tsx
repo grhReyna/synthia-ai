@@ -11,16 +11,17 @@ interface PromptCardProps {
   likeCount: number;
   isLiked: boolean;
   onToggleLike: (id: string) => void;
+  likesEnabled?: boolean;
 }
 
-export default function PromptCard({ prompt, likeCount, isLiked, onToggleLike }: PromptCardProps) {
+export default function PromptCard({ prompt, likeCount, isLiked, onToggleLike, likesEnabled = false }: PromptCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { lang } = useLanguage();
   const t = messages[lang].promptCard;
 
   return (
     <>
-      <div className="group relative bg-white rounded-2xl overflow-hidden break-inside-avoid mb-4 shadow-sm hover:shadow-xl hover:shadow-pink-100/60 transition-all duration-300">
+      <div className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-pink-100/60 transition-all duration-300">
         {/* Image */}
         <div className="relative w-full overflow-hidden cursor-pointer" onClick={() => setIsModalOpen(true)}>
           {prompt.imagen ? (
@@ -50,6 +51,7 @@ export default function PromptCard({ prompt, likeCount, isLiked, onToggleLike }:
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
+              {likesEnabled && (
               <button
                 onClick={(e) => { e.stopPropagation(); onToggleLike(prompt.id); }}
                 className={`w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all ${
@@ -62,17 +64,20 @@ export default function PromptCard({ prompt, likeCount, isLiked, onToggleLike }:
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </button>
+              )}
             </div>
 
             {/* Bottom Row: Stats + Universe Badge */}
             <div>
               <div className="flex items-center justify-between mb-2">
+                {likesEnabled && (
                 <div className="flex items-center gap-3 text-white/90 text-xs font-medium">
                   <span className="flex items-center gap-1">
                     <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                     {likeCount}
                   </span>
                 </div>
+                )}
                 <span className="px-2.5 py-1 bg-gray-900/70 backdrop-blur-sm text-white text-[10px] font-bold rounded-md uppercase tracking-wider">
                   {prompt.universo}
                 </span>
@@ -93,7 +98,7 @@ export default function PromptCard({ prompt, likeCount, isLiked, onToggleLike }:
         </div>
       </div>
 
-      <PromptModal prompt={prompt} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <PromptModal prompt={prompt} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} likeCount={likeCount} isLiked={isLiked} onToggleLike={onToggleLike} likesEnabled={likesEnabled} />
     </>
   );
 }

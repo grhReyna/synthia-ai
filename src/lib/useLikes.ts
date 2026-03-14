@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-const STORAGE_KEY = 'synthia-likes';
-
 interface LikesData {
   [promptId: string]: number;
 }
@@ -12,6 +10,7 @@ interface UserLikesData {
   [promptId: string]: boolean;
 }
 
+const STORAGE_KEY = 'synthia-likes';
 const USER_LIKES_KEY = 'synthia-user-likes';
 
 function getLikesFromStorage(): LikesData {

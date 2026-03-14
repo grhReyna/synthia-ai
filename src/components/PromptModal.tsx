@@ -9,9 +9,13 @@ interface PromptModalProps {
   prompt: Prompt;
   isOpen: boolean;
   onClose: () => void;
+  likeCount: number;
+  isLiked: boolean;
+  onToggleLike: (id: string) => void;
+  likesEnabled?: boolean;
 }
 
-export default function PromptModal({ prompt, isOpen, onClose }: PromptModalProps) {
+export default function PromptModal({ prompt, isOpen, onClose, likeCount, isLiked, onToggleLike, likesEnabled = false }: PromptModalProps) {
   const [copied, setCopied] = useState(false);
   const { lang } = useLanguage();
   const t = messages[lang].promptModal;
@@ -57,14 +61,31 @@ export default function PromptModal({ prompt, isOpen, onClose }: PromptModalProp
               </span>
               <h2 className="text-sm sm:text-lg font-bold text-gray-900 truncate">{prompt.nombre}</h2>
             </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors"
-            >
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <div className="flex items-center gap-2">
+              {likesEnabled && (
+              <button
+                onClick={() => onToggleLike(prompt.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  isLiked
+                    ? 'bg-pink-500 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill={isLiked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                {likeCount}
+              </button>
+              )}
+              <button
+                onClick={onClose}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* Body - side by side on desktop, stacked on mobile */}
