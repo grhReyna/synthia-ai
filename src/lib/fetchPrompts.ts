@@ -1,5 +1,5 @@
 // Fetch prompts from Google Sheet
-const SHEET_ID = '1NhD2v9RUUUsTIDZhQbgqbhHQ9xYJEwDYAzxNL8wyvaQ';
+const SHEET_ID = process.env.SHEET_ID || '';
 
 export interface Prompt {
   id: string;

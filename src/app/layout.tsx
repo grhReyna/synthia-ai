@@ -11,6 +11,23 @@ const poppins = Poppins({ subsets: ["latin"], weight: ["300", "400", "500", "600
 export const metadata: Metadata = {
   title: "Synthia AI - Epic AI Prompts",
   description: "AI Influencer specializing in epic and realistic prompts for anime, gaming and geek culture universes.",
+  metadataBase: new URL("https://synthia.ai"),
+  openGraph: {
+    title: "Synthia AI - Epic AI Prompts",
+    description: "AI Influencer specializing in epic and realistic prompts for anime, gaming and geek culture universes.",
+    type: "website",
+    images: ["/assets/banner.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Synthia AI - Epic AI Prompts",
+    description: "AI Influencer specializing in epic and realistic prompts for anime, gaming and geek culture universes.",
+    images: ["/assets/banner.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

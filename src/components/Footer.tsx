@@ -38,7 +38,7 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold text-pink-500 mb-4 text-sm uppercase tracking-wider">{t.community}</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="https://tiktok.com/@synthia.pinknovai" target="_blank" className="text-gray-500 hover:text-pink-500 transition font-medium">TikTok</a></li>
+              <li><a href="https://tiktok.com/@synthia.pinknovai" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-pink-500 transition font-medium">TikTok</a></li>
               <li><a href="#" className="text-gray-500 hover:text-pink-500 transition font-medium">{messages[lang].nav.contact}</a></li>
             </ul>
           </div>

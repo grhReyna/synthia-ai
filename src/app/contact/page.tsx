@@ -11,13 +11,20 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    const name = (form.elements.namedItem('name') as HTMLInputElement).value;
-    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
-    const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value;
+
+    // Honeypot anti-spam: if this hidden field is filled, it's a bot
+    const honeypot = (form.elements.namedItem('website') as HTMLInputElement).value;
+    if (honeypot) return;
+
+    const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+    const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value.trim();
+
+    if (!name || !email || !message) return;
     
     const subject = encodeURIComponent(`Contacto Synthia AI - ${name}`);
     const body = encodeURIComponent(`Nombre: ${name}\nEmail: ${email}\n\n${message}`);
-    window.location.href = `mailto:sythntia.ai.inf@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -65,6 +72,8 @@ export default function ContactPage() {
               <p className="text-sm text-gray-500 mb-6">{t.formDesc}</p>
               
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Honeypot - hidden from users, catches bots */}
+                <input type="text" name="website" className="absolute opacity-0 -z-10" tabIndex={-1} autoComplete="off" />
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.nameLabel}</label>
                   <input
