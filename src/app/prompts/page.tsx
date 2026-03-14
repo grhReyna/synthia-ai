@@ -2,6 +2,8 @@ import { fetchPromptsFromSheet } from '@/lib/fetchPrompts';
 import PromptGallery from '@/components/PromptGallery';
 import PromptsHeader from '@/components/PromptsHeader';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Prompts - Synthia AI',
   description: 'Epic prompt gallery for legendary universes',
