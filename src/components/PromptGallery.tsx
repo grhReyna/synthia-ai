@@ -126,7 +126,7 @@ function MasonryGrid({ prompts, getLikeCount, isLiked, toggleLike, likesEnabled 
   toggleLike: (id: string) => void;
   likesEnabled: boolean;
 }) {
-  const useColumns = useCallback(() => {
+  const getColumns = useCallback(() => {
     if (typeof window === 'undefined') return 2;
     const w = window.innerWidth;
     if (w >= 1280) return 4;
@@ -134,14 +134,14 @@ function MasonryGrid({ prompts, getLikeCount, isLiked, toggleLike, likesEnabled 
     return 2;
   }, []);
 
-  const [colCount, setColCount] = useState(useColumns);
+  const [colCount, setColCount] = useState(2);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const handleResize = () => setColCount(useColumns());
+    setColCount(getColumns());
+    const handleResize = () => setColCount(getColumns());
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [useColumns]);
+  }, [getColumns]);
 
   // Round-robin distribution: item 0 → col 0, item 1 → col 1, etc.
   const columns = useMemo(() => {
