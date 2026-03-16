@@ -28,6 +28,16 @@ const tools: Tool[] = [
     code: '7BW9YRAGZYCL',
     tag: '⭐ Favorita',
   },
+  {
+    name: 'ElevenLabs',
+    description: {
+      es: 'Generación de voz con IA ultra realista. Clonación de voz, text-to-speech y doblaje en múltiples idiomas.',
+      en: 'Ultra-realistic AI voice generation. Voice cloning, text-to-speech, and dubbing in multiple languages.',
+    },
+    icon: '🎙️',
+    color: 'from-blue-500 to-cyan-600',
+    url: 'https://try.elevenlabs.io/4x0okzqzopky',
+  },
 ];
 
 export default function ToolsPage() {
