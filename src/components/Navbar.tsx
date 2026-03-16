@@ -15,6 +15,7 @@ export default function Navbar() {
     { href: '/prompts', label: t.prompts },
     { href: '/shop', label: t.shop },
     { href: '/services', label: t.services },
+    { href: '/tools', label: t.tools },
     { href: '/contact', label: t.contact },
     { href: '/bunker', label: t.bunker },
   ];

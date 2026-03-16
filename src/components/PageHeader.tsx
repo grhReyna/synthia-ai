@@ -3,7 +3,7 @@
 import { useLanguage } from '@/lib/LanguageContext';
 import { messages } from '@/lib/messages';
 
-type PageKey = 'bunker' | 'contact' | 'services' | 'shop' | 'privacy' | 'terms' | 'cookie';
+type PageKey = 'bunker' | 'contact' | 'services' | 'shop' | 'tools' | 'privacy' | 'terms' | 'cookie';
 
 export default function PageHeader({ pageKey }: { pageKey: PageKey }) {
   const { lang } = useLanguage();
