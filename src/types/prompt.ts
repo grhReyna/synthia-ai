@@ -10,4 +10,6 @@ export interface Prompt {
   imagenSpicy: string;
   tags: string[];
   fecha: string;
+  pack?: string;
+  imagenes?: string[];
 }

@@ -64,6 +64,10 @@ export const messages = {
       empty: "No hay prompts en esta categoría",
       sortPopular: "Populares",
       sortRecent: "Recientes",
+      tabPrompts: "Prompts",
+      tabPacks: "Packs",
+      packBuy: "Comprar Pack",
+      packIncludes: "prompts incluidos",
     },
     promptCard: {
       noImage: "Sin imagen",
@@ -248,6 +252,10 @@ export const messages = {
       empty: "No prompts in this category",
       sortPopular: "Popular",
       sortRecent: "Recent",
+      tabPrompts: "Prompts",
+      tabPacks: "Packs",
+      packBuy: "Buy Pack",
+      packIncludes: "prompts included",
     },
     promptCard: {
       noImage: "No image",

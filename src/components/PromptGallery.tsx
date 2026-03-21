@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Prompt } from '@/lib/fetchPrompts';
 import PromptCard from './PromptCard';
+import PackCard from './PackCard';
 import { useLanguage } from '@/lib/LanguageContext';
 import { messages } from '@/lib/messages';
 import { useLikes } from '@/lib/useLikes';
@@ -13,38 +14,89 @@ interface PromptGalleryProps {
 
 export default function PromptGallery({ prompts }: PromptGalleryProps) {
   const LIKES_ENABLED = false;
+  const [activeTab, setActiveTab] = useState<'prompts' | 'packs'>('prompts');
   const [selectedUniverso, setSelectedUniverso] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'popular' | 'recent'>('recent');
   const { lang } = useLanguage();
   const t = messages[lang].prompts;
   const { toggleLike, getLikeCount, isLiked, likes } = useLikes();
 
-  // Obtener universos únicos
+  // Split prompts from packs
+  const regularPrompts = useMemo(() => prompts.filter(p => !p.pack), [prompts]);
+  const packPrompts = useMemo(() => prompts.filter(p => !!p.pack), [prompts]);
+
+  // Group pack prompts by pack name
+  const packGroups = useMemo(() => {
+    const groups: Record<string, Prompt[]> = {};
+    packPrompts.forEach(p => {
+      const key = p.pack!;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(p);
+    });
+    return Object.values(groups);
+  }, [packPrompts]);
+
+  const currentPrompts = activeTab === 'prompts' ? regularPrompts : packPrompts;
+
+  // Obtener universos únicos from current tab
   const universos = useMemo(() => {
-    const unique = Array.from(new Set(prompts.map(p => p.universo))).filter(Boolean);
+    const unique = Array.from(new Set(currentPrompts.map(p => p.universo))).filter(Boolean);
     return unique.sort();
-  }, [prompts]);
+  }, [currentPrompts]);
+
+  // Reset filter on tab change
+  useEffect(() => {
+    setSelectedUniverso(null);
+  }, [activeTab]);
 
   // Filtrar y ordenar prompts
   const filteredPrompts = useMemo(() => {
     let filtered = selectedUniverso
-      ? prompts.filter(p => p.universo === selectedUniverso)
-      : [...prompts];
+      ? regularPrompts.filter(p => p.universo === selectedUniverso)
+      : [...regularPrompts];
 
     if (sortBy === 'recent') {
-      // Reverse: last added in the sheet shows first
       filtered.reverse();
     } else {
-      // Popular: sort by likes desc, items with same likes keep reverse (newest first)
       filtered.reverse();
       filtered.sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0));
     }
 
     return filtered;
-  }, [prompts, selectedUniverso, sortBy, likes]);
+  }, [regularPrompts, selectedUniverso, sortBy, likes]);
+
+  // Filter packs by universo
+  const filteredPacks = useMemo(() => {
+    if (!selectedUniverso) return packGroups;
+    return packGroups.filter(group => group.some(p => p.universo === selectedUniverso));
+  }, [packGroups, selectedUniverso]);
 
   return (
     <div className="w-full">
+      {/* Tabs */}
+      <div className="flex items-center gap-2 mb-6">
+        <button
+          onClick={() => setActiveTab('prompts')}
+          className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ${
+            activeTab === 'prompts'
+              ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg shadow-pink-200/50'
+              : 'bg-white text-gray-600 hover:bg-pink-50 hover:text-pink-500 border border-pink-100'
+          }`}
+        >
+          ✨ {t.tabPrompts} ({regularPrompts.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('packs')}
+          className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ${
+            activeTab === 'packs'
+              ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg shadow-pink-200/50'
+              : 'bg-white text-gray-600 hover:bg-pink-50 hover:text-pink-500 border border-pink-100'
+          }`}
+        >
+          📦 {t.tabPacks} ({packGroups.length})
+        </button>
+      </div>
+
       {/* Filters & Sort */}
       <div className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex flex-wrap gap-2">
@@ -56,11 +108,11 @@ export default function PromptGallery({ prompts }: PromptGalleryProps) {
                 : 'bg-white text-gray-600 hover:bg-pink-50 hover:text-pink-500 border border-pink-100'
             }`}
           >
-            {t.all} ({prompts.length})
+            {t.all} ({currentPrompts.length})
           </button>
 
           {universos.map((universo) => {
-            const count = prompts.filter(p => p.universo === universo).length;
+            const count = currentPrompts.filter(p => p.universo === universo).length;
             return (
               <button
                 key={universo}
@@ -78,7 +130,7 @@ export default function PromptGallery({ prompts }: PromptGalleryProps) {
         </div>
 
         {/* Sort Toggle */}
-        {LIKES_ENABLED && (
+        {LIKES_ENABLED && activeTab === 'prompts' && (
         <div className="flex items-center gap-1 bg-white border border-pink-100 rounded-full p-1 self-start sm:self-auto">
           <button
             onClick={() => setSortBy('popular')}
@@ -107,12 +159,26 @@ export default function PromptGallery({ prompts }: PromptGalleryProps) {
       </div>
 
       {/* Gallery */}
-      {filteredPrompts.length > 0 ? (
-        <MasonryGrid prompts={filteredPrompts} getLikeCount={getLikeCount} isLiked={isLiked} toggleLike={toggleLike} likesEnabled={LIKES_ENABLED} />
+      {activeTab === 'prompts' ? (
+        filteredPrompts.length > 0 ? (
+          <MasonryGrid prompts={filteredPrompts} getLikeCount={getLikeCount} isLiked={isLiked} toggleLike={toggleLike} likesEnabled={LIKES_ENABLED} />
+        ) : (
+          <div className="text-center py-20">
+            <p className="text-xl text-gray-500">{t.empty}</p>
+          </div>
+        )
       ) : (
-        <div className="text-center py-20">
-          <p className="text-xl text-gray-500">{t.empty}</p>
-        </div>
+        filteredPacks.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPacks.map((group, idx) => (
+              <PackCard key={group[0].pack || idx} pack={group} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <p className="text-xl text-gray-500">{t.empty}</p>
+          </div>
+        )
       )}
     </div>
   );
