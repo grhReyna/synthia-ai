@@ -7,10 +7,13 @@ export interface Prompt {
   universo: string;
   descripcion: string;
   imagen: string;
+  imagenes: string[];
   precio?: number;
+  descuento?: number;
   gumroad?: string;
   referencia?: string;
   sujeto?: boolean;
+  pack?: string;
 }
 
 // Parser más robusto para CSV con saltos de línea en las celdas
@@ -118,12 +121,15 @@ export async function fetchPromptsFromSheet(): Promise<Prompt[]> {
       const descripcionIdx = headers.findIndex(h => h.includes('descripción') || h.includes('descripcion'));
       const imagenIdx = headers.findIndex(h => (h.includes('image') || h.includes('imagen')) && !h.includes('referencia'));
       const precioIdx = headers.findIndex(h => h.includes('precio'));
-      const gumroadIdx = headers.findIndex(h => h.includes('gumroad'));
+      // Find ALL gumroad columns and take the first non-empty value per row
+      const gumroadIndices = headers.reduce<number[]>((acc, h, idx) => { if (h.includes('gumroad')) acc.push(idx); return acc; }, []);
+      const descuentoIdx = headers.findIndex(h => h.includes('descuento'));
       const referenciaIdx = headers.findIndex(h => h.includes('referencia'));
       const sujetoIdx = headers.findIndex(h => h.includes('sujeto'));
+      const packIdx = headers.findIndex(h => h === 'pack');
 
       if (i === 1) {
-        console.log(`Column indices: imagen=${imagenIdx}, referencia=${referenciaIdx}, sujeto=${sujetoIdx}`);
+        console.log(`Column indices: imagen=${imagenIdx}, referencia=${referenciaIdx}, sujeto=${sujetoIdx}, gumroad=${JSON.stringify(gumroadIndices)}`);
         console.log(`Row length: ${row.length}, Headers length: ${headers.length}`);
       }
 
@@ -139,16 +145,38 @@ export async function fetchPromptsFromSheet(): Promise<Prompt[]> {
           precio = parseFloat(precioStr.replace(/[^\d.]/g, '')) || 0;
         }
 
+        // Get gumroad link from any matching column (first non-empty wins)
+        const gumroadValue = gumroadIndices.map(idx => row[idx]?.trim() || '').find(v => v) || '';
+
+        // Parse discount
+        let descuento = 0;
+        if (descuentoIdx >= 0) {
+          const descuentoStr = row[descuentoIdx]?.trim().toUpperCase() || '';
+          if (descuentoStr && descuentoStr !== 'GRATIS') {
+            descuento = parseFloat(descuentoStr.replace(/[^\d.]/g, '')) || 0;
+          }
+        }
+
+        const rawImagen = row[imagenIdx]?.trim() || '';
+        const packValue = packIdx >= 0 ? (row[packIdx]?.trim() || '') : '';
+        // For packs, images are comma-separated URLs
+        const imagenes = rawImagen
+          ? rawImagen.split(',').map((url: string) => url.trim()).filter(Boolean)
+          : [];
+
         const prompt: Prompt = {
           id: `prompt-${prompts.length}`,
           nombre,
           universo,
           descripcion: row[descripcionIdx]?.trim() || '',
-          imagen: row[imagenIdx]?.trim() || '',
+          imagen: imagenes[0] || '',
+          imagenes,
           precio,
-          gumroad: row[gumroadIdx]?.trim() || '',
+          descuento: descuento || undefined,
+          gumroad: gumroadValue,
           referencia: referenciaIdx >= 0 ? (row[referenciaIdx]?.trim() || '') : '',
           sujeto: sujetoIdx >= 0 ? (row[sujetoIdx]?.trim().toUpperCase() === 'YES') : false,
+          pack: packValue || undefined,
         };
 
         prompts.push(prompt);

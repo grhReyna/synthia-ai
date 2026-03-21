@@ -198,8 +198,15 @@ export default function PromptModal({ prompt, isOpen, onClose, likeCount, isLike
               <div className="shrink-0 px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between gap-2 sm:gap-4">
                 <div className="shrink-0">
                   {prompt.precio ? (
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-xl sm:text-2xl font-extrabold text-gray-900">${prompt.precio}</span>
+                    <div className="flex items-baseline gap-2">
+                      {prompt.descuento ? (
+                        <>
+                          <span className="text-sm sm:text-base font-semibold text-gray-400 line-through">${prompt.precio}</span>
+                          <span className="text-xl sm:text-2xl font-extrabold text-pink-500">${prompt.descuento}</span>
+                        </>
+                      ) : (
+                        <span className="text-xl sm:text-2xl font-extrabold text-gray-900">${prompt.precio}</span>
+                      )}
                       <span className="text-[10px] sm:text-xs text-gray-400 font-medium">USD</span>
                     </div>
                   ) : (
