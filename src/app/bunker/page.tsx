@@ -108,15 +108,16 @@ export default function BunkerPage() {
               <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">{t.exclusiveTitle}</h2>
               <p className="text-gray-400 max-w-lg mx-auto mb-8 text-base">{t.exclusiveDesc}</p>
               
-              {/* Fanvue Button (Coming Soon) */}
+              {/* Fanvue Button */}
               <div className="space-y-4">
-                <button
-                  disabled
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full font-bold text-base opacity-60 cursor-not-allowed shadow-lg"
+                <a
+                  href="https://www.fanvue.com/synthia-ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full font-bold text-base hover:from-pink-600 hover:to-purple-700 transition-all shadow-lg shadow-pink-500/30"
                 >
                   {t.fanvueBtn}
-                </button>
-                <p className="text-sm text-pink-300/60">{t.fanvueSoon}</p>
+                </a>
               </div>
             </div>
           </div>

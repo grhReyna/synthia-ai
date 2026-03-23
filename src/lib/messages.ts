@@ -185,10 +185,9 @@ export const messages = {
       codeCopied: "¡Copiado!",
     },
     floating: {
-      title: "🔥 El Bunker — Próximamente",
-      desc: "Contenido exclusivo en Fanvue. Estamos preparando algo épico para ti.",
+      title: "� El Bunker — Contenido Exclusivo",
+      desc: "Contenido exclusivo +18 en Fanvue. Accede al lado más atrevido de Synthia.",
       label: "El Bunker",
-      soon: "PRONTO",
     },
   },
   en: {
@@ -377,10 +376,9 @@ export const messages = {
       codeCopied: "Copied!",
     },
     floating: {
-      title: "🔥 The Bunker — Coming Soon",
-      desc: "Exclusive content on Fanvue. We're preparing something epic for you.",
+      title: "� The Bunker — Exclusive Content",
+      desc: "Exclusive +18 content on Fanvue. Access Synthia's boldest side.",
       label: "The Bunker",
-      soon: "SOON",
     },
   },
 } as const;

@@ -21,7 +21,6 @@ export default function FloatingBunker() {
         <span className="text-base sm:text-lg">🔐</span>
         <span>{t.label}</span>
         <span className="text-[10px] bg-white/25 px-1.5 py-0.5 rounded-full font-bold leading-none">+18</span>
-        <span className="hidden sm:inline text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-semibold">{t.soon}</span>
       </a>
     </div>
   );
