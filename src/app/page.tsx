@@ -1,15 +1,30 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import HeroSection from "@/components/HeroSection";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useLanguage } from "@/lib/LanguageContext";
 import { messages } from "@/lib/messages";
+import { Prompt } from "@/lib/fetchPrompts";
 
 export default function Home() {
   const { lang } = useLanguage();
   const t = messages[lang].home;
   const f = messages[lang].home.features;
+  const [recentPrompts, setRecentPrompts] = useState<Prompt[]>([]);
+
+  useEffect(() => {
+    fetch('/api/prompts')
+      .then(res => res.ok ? res.json() : [])
+      .then((prompts: Prompt[]) => {
+        // Get last 6 non-pack prompts (reversed = most recent first)
+        const recent = prompts.filter(p => !p.pack).reverse().slice(0, 6);
+        setRecentPrompts(recent);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-pink-50/50 via-white to-purple-50/30">
       {/* Hero Section */}
@@ -107,6 +122,56 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Recent Prompts Section */}
+      {recentPrompts.length > 0 && (
+        <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="inline-block px-4 py-1.5 bg-pink-100 text-pink-600 rounded-full text-xs font-bold mb-4 border border-pink-200">🎨 New</span>
+            <h2 className="text-4xl md:text-5xl font-black mb-4">
+              <span className="bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 bg-clip-text text-transparent">
+                {t.recentTitle}
+              </span>
+            </h2>
+            <p className="text-base text-gray-500 max-w-2xl mx-auto">
+              {t.recentDesc}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-10">
+            {recentPrompts.map((prompt) => (
+              <Link key={prompt.id} href="/prompts" className="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:shadow-pink-100/60 transition-all duration-300 hover:-translate-y-1">
+                <div className="relative w-full aspect-[3/4] overflow-hidden">
+                  {prompt.imagen ? (
+                    <img
+                      src={prompt.imagen}
+                      alt={prompt.nombre}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50">
+                      <div className="text-4xl">🎨</div>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                    <span className="px-2 py-0.5 bg-gray-900/60 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-bold rounded-md uppercase tracking-wider">
+                      {prompt.universo}
+                    </span>
+                    <h3 className="text-white font-bold text-xs sm:text-sm mt-1.5 drop-shadow-lg line-clamp-2">{prompt.nombre}</h3>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link href="/prompts" className="inline-flex items-center gap-2 px-8 py-3 bg-white text-pink-500 rounded-full font-bold text-sm border border-pink-200 hover:bg-pink-50 hover:border-pink-300 transition-all shadow-sm">
+              {t.recentViewAll}
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">

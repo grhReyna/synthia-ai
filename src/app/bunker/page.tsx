@@ -77,7 +77,7 @@ export default function BunkerPage() {
 
   // Main Bunker Content
   const featureList = [
-    { ...t.features.exclusive, icon: '�' },
+    { ...t.features.exclusive, icon: '💋' },
     { ...t.features.bts, icon: '👘' },
     { ...t.features.early, icon: '📅' },
     { ...t.features.community, icon: '✨' },
