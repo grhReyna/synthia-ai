@@ -36,7 +36,17 @@ export default function PromptGallery({ prompts }: PromptGalleryProps) {
     return Object.values(groups);
   }, [packPrompts]);
 
-  const currentPrompts = activeTab === 'prompts' ? regularPrompts : packPrompts;
+  // One representative per pack (first image) for the Prompts tab
+  const packRepresentatives = useMemo(() => {
+    return packGroups.map(group => group[0]);
+  }, [packGroups]);
+
+  // All prompts for the Prompts tab: regular + pack representatives
+  const allPromptsTab = useMemo(() => {
+    return [...regularPrompts, ...packRepresentatives];
+  }, [regularPrompts, packRepresentatives]);
+
+  const currentPrompts = activeTab === 'prompts' ? allPromptsTab : packPrompts;
 
   // Obtener universos únicos from current tab
   const universos = useMemo(() => {
@@ -52,8 +62,8 @@ export default function PromptGallery({ prompts }: PromptGalleryProps) {
   // Filtrar y ordenar prompts
   const filteredPrompts = useMemo(() => {
     let filtered = selectedUniverso
-      ? regularPrompts.filter(p => p.universo === selectedUniverso)
-      : [...regularPrompts];
+      ? allPromptsTab.filter(p => p.universo === selectedUniverso)
+      : [...allPromptsTab];
 
     if (sortBy === 'recent') {
       filtered.reverse();
@@ -63,7 +73,7 @@ export default function PromptGallery({ prompts }: PromptGalleryProps) {
     }
 
     return filtered;
-  }, [regularPrompts, selectedUniverso, sortBy, likes]);
+  }, [allPromptsTab, selectedUniverso, sortBy, likes]);
 
   // Filter packs by universo
   const filteredPacks = useMemo(() => {
