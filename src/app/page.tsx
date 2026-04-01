@@ -30,6 +30,56 @@ export default function Home() {
       {/* Hero Section */}
       <HeroSection />
 
+      {/* Recent Prompts Section */}
+      {recentPrompts.length > 0 && (
+        <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="inline-block px-4 py-1.5 bg-pink-100 text-pink-600 rounded-full text-xs font-bold mb-4 border border-pink-200">🎨 New</span>
+            <h2 className="text-4xl md:text-5xl font-black mb-4">
+              <span className="bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 bg-clip-text text-transparent">
+                {t.recentTitle}
+              </span>
+            </h2>
+            <p className="text-base text-gray-500 max-w-2xl mx-auto">
+              {t.recentDesc}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-10">
+            {recentPrompts.map((prompt) => (
+              <Link key={prompt.id} href="/prompts" className="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:shadow-pink-100/60 transition-all duration-300 hover:-translate-y-1">
+                <div className="relative w-full aspect-[3/4] overflow-hidden">
+                  {prompt.imagen ? (
+                    <img
+                      src={prompt.imagen}
+                      alt={prompt.nombre}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50">
+                      <div className="text-4xl">🎨</div>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                    <span className="px-2 py-0.5 bg-gray-900/60 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-bold rounded-md uppercase tracking-wider">
+                      {prompt.universo}
+                    </span>
+                    <h3 className="text-white font-bold text-xs sm:text-sm mt-1.5 drop-shadow-lg line-clamp-2">{prompt.nombre}</h3>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link href="/prompts" className="inline-flex items-center gap-2 px-8 py-3 bg-white text-pink-500 rounded-full font-bold text-sm border border-pink-200 hover:bg-pink-50 hover:border-pink-300 transition-all shadow-sm">
+              {t.recentViewAll}
+            </Link>
+          </div>
+        </section>
+      )}
+
       {/* Features Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="text-center mb-16 animate-fadeIn">
@@ -123,55 +173,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Recent Prompts Section */}
-      {recentPrompts.length > 0 && (
-        <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-1.5 bg-pink-100 text-pink-600 rounded-full text-xs font-bold mb-4 border border-pink-200">🎨 New</span>
-            <h2 className="text-4xl md:text-5xl font-black mb-4">
-              <span className="bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 bg-clip-text text-transparent">
-                {t.recentTitle}
-              </span>
-            </h2>
-            <p className="text-base text-gray-500 max-w-2xl mx-auto">
-              {t.recentDesc}
-            </p>
-          </div>
+      {/* Reviews Section */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <span className="inline-block px-4 py-1.5 bg-pink-100 text-pink-600 rounded-full text-xs font-bold mb-4 border border-pink-200">💬 Reviews</span>
+          <h2 className="text-4xl md:text-5xl font-black mb-4">
+            <span className="bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 bg-clip-text text-transparent">
+              {t.reviewsTitle}
+            </span>
+          </h2>
+          <p className="text-base text-gray-500 max-w-2xl mx-auto">
+            {t.reviewsDesc}
+          </p>
+        </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-10">
-            {recentPrompts.map((prompt) => (
-              <Link key={prompt.id} href="/prompts" className="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:shadow-pink-100/60 transition-all duration-300 hover:-translate-y-1">
-                <div className="relative w-full aspect-[3/4] overflow-hidden">
-                  {prompt.imagen ? (
-                    <img
-                      src={prompt.imagen}
-                      alt={prompt.nombre}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50">
-                      <div className="text-4xl">🎨</div>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                    <span className="px-2 py-0.5 bg-gray-900/60 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-bold rounded-md uppercase tracking-wider">
-                      {prompt.universo}
-                    </span>
-                    <h3 className="text-white font-bold text-xs sm:text-sm mt-1.5 drop-shadow-lg line-clamp-2">{prompt.nombre}</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {t.reviews.map((review, idx) => (
+            <div
+              key={idx}
+              className="bg-white/80 backdrop-blur-sm border border-pink-100 rounded-2xl p-6 hover:shadow-xl hover:shadow-pink-100/50 hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center text-xl">
+                  {review.avatar}
+                </div>
+                <div>
+                  <p className="font-bold text-gray-800 text-sm">{review.name}</p>
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg key={i} className={`w-3.5 h-3.5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-200'}`} fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                    ))}
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Link href="/prompts" className="inline-flex items-center gap-2 px-8 py-3 bg-white text-pink-500 rounded-full font-bold text-sm border border-pink-200 hover:bg-pink-50 hover:border-pink-300 transition-all shadow-sm">
-              {t.recentViewAll}
-            </Link>
-          </div>
-        </section>
-      )}
+              </div>
+              <p className="text-sm text-gray-600 leading-relaxed">&ldquo;{review.text}&rdquo;</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
