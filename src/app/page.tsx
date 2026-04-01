@@ -7,21 +7,27 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/LanguageContext";
 import { messages } from "@/lib/messages";
 import { Prompt } from "@/lib/fetchPrompts";
+import { Review } from "@/lib/fetchReviews";
 
 export default function Home() {
   const { lang } = useLanguage();
   const t = messages[lang].home;
   const f = messages[lang].home.features;
   const [recentPrompts, setRecentPrompts] = useState<Prompt[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
     fetch('/api/prompts')
       .then(res => res.ok ? res.json() : [])
       .then((prompts: Prompt[]) => {
-        // Get last 6 non-pack prompts (reversed = most recent first)
         const recent = prompts.filter(p => !p.pack).reverse().slice(0, 6);
         setRecentPrompts(recent);
       })
+      .catch(() => {});
+
+    fetch('/api/reviews')
+      .then(res => res.ok ? res.json() : [])
+      .then((data: Review[]) => setReviews(data))
       .catch(() => {});
   }, []);
 
@@ -187,28 +193,44 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {t.reviews.map((review, idx) => (
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${reviews.length >= 4 ? 'lg:grid-cols-4' : reviews.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'} gap-5`}>
+          {(reviews.length > 0 ? reviews : t.reviews.map(r => ({
+            nombre: r.name,
+            estrellas: r.rating,
+            calidadVideo: 5,
+            tiempoEntrega: 5,
+            recomienda: true,
+            comentario: r.text,
+          }))).map((review, idx) => (
             <div
               key={idx}
               className="bg-white/80 backdrop-blur-sm border border-pink-100 rounded-2xl p-6 hover:shadow-xl hover:shadow-pink-100/50 hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center text-xl">
-                  {review.avatar}
+                  ⭐
                 </div>
                 <div>
-                  <p className="font-bold text-gray-800 text-sm">{review.name}</p>
+                  <p className="font-bold text-gray-800 text-sm">{review.nombre}</p>
                   <div className="flex gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <svg key={i} className={`w-3.5 h-3.5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-200'}`} fill="currentColor" viewBox="0 0 24 24">
+                      <svg key={i} className={`w-3.5 h-3.5 ${i < review.estrellas ? 'text-yellow-400' : 'text-gray-200'}`} fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                       </svg>
                     ))}
                   </div>
                 </div>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed">&ldquo;{review.text}&rdquo;</p>
+              {review.comentario ? (
+                <p className="text-sm text-gray-600 leading-relaxed mb-3">&ldquo;{review.comentario}&rdquo;</p>
+              ) : null}
+              <div className="flex flex-wrap gap-2 text-[10px] font-semibold">
+                <span className="px-2 py-1 rounded-full bg-pink-50 text-pink-500">{lang === 'es' ? 'Calidad' : 'Quality'}: {review.calidadVideo}/5</span>
+                <span className="px-2 py-1 rounded-full bg-purple-50 text-purple-500">{lang === 'es' ? 'Entrega' : 'Delivery'}: {review.tiempoEntrega}/5</span>
+                {review.recomienda && (
+                  <span className="px-2 py-1 rounded-full bg-green-50 text-green-600">✅ {lang === 'es' ? 'Recomienda' : 'Recommends'}</span>
+                )}
+              </div>
             </div>
           ))}
         </div>
