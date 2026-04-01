@@ -180,8 +180,8 @@ export default function Home() {
       </section>
 
       {/* Reviews Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center mb-12">
+      <section className="relative py-20">
+        <div className="text-center mb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <span className="inline-block px-4 py-1.5 bg-pink-100 text-pink-600 rounded-full text-xs font-bold mb-4 border border-pink-200">💬 Reviews</span>
           <h2 className="text-4xl md:text-5xl font-black mb-4">
             <span className="bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 bg-clip-text text-transparent">
@@ -193,8 +193,9 @@ export default function Home() {
           </p>
         </div>
 
-        <div className={`grid grid-cols-1 sm:grid-cols-2 ${reviews.length >= 4 ? 'lg:grid-cols-4' : reviews.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'} gap-5`}>
-          {(reviews.length > 0 ? reviews : t.reviews.map(r => ({
+        <div className="relative w-full overflow-x-auto pb-4 scrollbar-thin">
+          <div className="flex gap-5 px-4 sm:px-6 lg:px-8 w-max">
+            {(reviews.length > 0 ? reviews : t.reviews.map(r => ({
             nombre: r.name,
             estrellas: r.rating,
             calidadVideo: 5,
@@ -204,7 +205,7 @@ export default function Home() {
           }))).map((review, idx) => (
             <div
               key={idx}
-              className="bg-white/80 backdrop-blur-sm border border-pink-100 rounded-2xl p-6 hover:shadow-xl hover:shadow-pink-100/50 hover:-translate-y-1 transition-all duration-300"
+              className="w-[300px] min-w-[300px] flex-shrink-0 snap-start bg-white/80 backdrop-blur-sm border border-pink-100 rounded-2xl p-6 hover:shadow-xl hover:shadow-pink-100/50 hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center text-xl">
@@ -233,6 +234,7 @@ export default function Home() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       </section>
 
