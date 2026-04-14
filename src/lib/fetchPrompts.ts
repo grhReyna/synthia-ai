@@ -14,6 +14,7 @@ export interface Prompt {
   referencia?: string;
   sujeto?: boolean;
   pack?: string;
+  videoTutorial?: string;
 }
 
 // Parser más robusto para CSV con saltos de línea en las celdas
@@ -127,6 +128,7 @@ export async function fetchPromptsFromSheet(): Promise<Prompt[]> {
       const referenciaIdx = headers.findIndex(h => h.includes('referencia'));
       const sujetoIdx = headers.findIndex(h => h.includes('sujeto'));
       const packIdx = headers.findIndex(h => h === 'pack');
+      const videoTutorialIdx = headers.findIndex(h => h.includes('video tutorial') || h.includes('videotutorial'));
 
       if (i === 1) {
         console.log(`Column indices: imagen=${imagenIdx}, referencia=${referenciaIdx}, sujeto=${sujetoIdx}, gumroad=${JSON.stringify(gumroadIndices)}`);
@@ -177,6 +179,7 @@ export async function fetchPromptsFromSheet(): Promise<Prompt[]> {
           referencia: referenciaIdx >= 0 ? (row[referenciaIdx]?.trim() || '') : '',
           sujeto: sujetoIdx >= 0 ? (row[sujetoIdx]?.trim().toUpperCase() === 'YES') : false,
           pack: packValue || undefined,
+          videoTutorial: videoTutorialIdx >= 0 ? (row[videoTutorialIdx]?.trim() || undefined) : undefined,
         };
 
         prompts.push(prompt);
