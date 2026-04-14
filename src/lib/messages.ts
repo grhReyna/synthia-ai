@@ -40,6 +40,9 @@ export const messages = {
       recentTitle: "Últimos Prompts",
       recentDesc: "Los prompts más recientes de nuestra galería",
       recentViewAll: "Ver todos los prompts →",
+      latestTutorialTitle: "Último Video Tutorial",
+      latestTutorialDesc: "Aprende a crear arte épico con nuestro tutorial más reciente",
+      latestTutorialBuy: "Comprar Tutorial",
       reviewsTitle: "Lo que dicen nuestros usuarios",
       reviewsDesc: "Opiniones reales de nuestra comunidad",
       reviews: [
@@ -161,6 +164,9 @@ export const messages = {
       comingSoonTitle: "La tienda abrirá pronto",
       comingSoonDesc: "Estamos preparando packs exclusivos de prompts, bundles y recursos premium para ti.",
       notifyBtn: "🔔 Avísame cuando abra",
+      videoTutorials: "Video Tutoriales",
+      videoTutorialsDesc: "Aprende paso a paso cómo crear arte épico con IA",
+      buyTutorial: "Comprar Tutorial",
       preview: {
         packs: { title: "Packs de Prompts", desc: "Colecciones curadas por universo" },
         bundles: { title: "Bundles Especiales", desc: "Combos con descuento exclusivo" },
@@ -239,6 +245,9 @@ export const messages = {
       recentTitle: "Latest Prompts",
       recentDesc: "The most recent prompts from our gallery",
       recentViewAll: "View all prompts →",
+      latestTutorialTitle: "Latest Video Tutorial",
+      latestTutorialDesc: "Learn to create epic art with our most recent tutorial",
+      latestTutorialBuy: "Buy Tutorial",
       reviewsTitle: "What our users say",
       reviewsDesc: "Real opinions from our community",
       reviews: [
@@ -360,6 +369,9 @@ export const messages = {
       comingSoonTitle: "The shop opens soon",
       comingSoonDesc: "We're preparing exclusive prompt packs, bundles, and premium resources for you.",
       notifyBtn: "🔔 Notify me when it opens",
+      videoTutorials: "Video Tutorials",
+      videoTutorialsDesc: "Learn step by step how to create epic AI art",
+      buyTutorial: "Buy Tutorial",
       preview: {
         packs: { title: "Prompt Packs", desc: "Curated collections by universe" },
         bundles: { title: "Special Bundles", desc: "Exclusive discount combos" },

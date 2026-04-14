@@ -15,6 +15,15 @@ interface ShopPack {
   count: number;
 }
 
+interface VideoTutorial {
+  name: string;
+  universe: string;
+  image: string;
+  price: number;
+  discount: number;
+  gumroad: string;
+}
+
 export default function ShopPage() {
   const { lang } = useLanguage();
   const t = messages[lang].shop;
@@ -32,13 +41,26 @@ export default function ShopPage() {
   };
 
   const [packs, setPacks] = useState<ShopPack[]>([featuredPack]);
+  const [tutorials, setTutorials] = useState<VideoTutorial[]>([]);
   const [currentSlide, setCurrentSlide] = useState<Record<string, number>>({});
 
-  // Fetch packs from the sheet via API
+  // Fetch packs and video tutorials from the sheet via API
   useEffect(() => {
     fetch('/api/prompts')
       .then(res => res.ok ? res.json() : [])
-      .then((prompts: { pack?: string; imagenes: string[]; gumroad?: string; precio?: number; descuento?: number; universo: string }[]) => {
+      .then((prompts: { pack?: string; videoTutorial?: string; imagenes: string[]; imagen: string; gumroad?: string; precio?: number; descuento?: number; universo: string; nombre: string }[]) => {
+        // Video tutorials (newest first = reversed)
+        const tutorialPrompts = prompts.filter((p) => !!p.videoTutorial).reverse();
+        setTutorials(tutorialPrompts.map(p => ({
+          name: p.nombre,
+          universe: p.universo,
+          image: p.imagen || '',
+          price: p.precio || 0,
+          discount: p.descuento || 0,
+          gumroad: p.gumroad || '',
+        })));
+
+        // Packs (newest first = reversed)
         const packPrompts = prompts.filter((p: { pack?: string }) => !!p.pack);
         const groups: Record<string, typeof packPrompts> = {};
         packPrompts.forEach((p: typeof packPrompts[0]) => {
@@ -55,7 +77,7 @@ export default function ShopPage() {
           discount: items[0].descuento || 0,
           images: items.flatMap((i: typeof items[0]) => i.imagenes),
           count: items.length,
-        }));
+        })).reverse();
 
         setPacks(sheetPacks.length > 0 ? sheetPacks : [featuredPack]);
       })
@@ -86,6 +108,96 @@ export default function ShopPage() {
       {/* Content */}
       <div className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Video Tutorials */}
+          {tutorials.length > 0 && (
+            <div className="mb-16">
+              <div className="text-center mb-10">
+                <div className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full text-sm font-bold text-purple-600 border border-purple-200 mb-4">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
+                  </span>
+                  {lang === 'es' ? 'Nuevo' : 'New'}
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-black mb-2 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                  {t.videoTutorials}
+                </h2>
+                <p className="text-gray-500 max-w-xl mx-auto text-base">
+                  {t.videoTutorialsDesc}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {tutorials.map((tutorial) => (
+                  <div
+                    key={tutorial.name}
+                    className="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl hover:shadow-purple-100/60 transition-all duration-300 hover:-translate-y-1 border border-purple-50"
+                  >
+                    <div className="relative w-full aspect-video overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50">
+                      {tutorial.image ? (
+                        <img
+                          src={tutorial.image}
+                          alt={tutorial.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <div className="text-6xl">🎬</div>
+                        </div>
+                      )}
+                      <div className="absolute top-3 left-3 z-10">
+                        <span className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-black rounded-full uppercase tracking-wider shadow-lg">
+                          🎬 Video Tutorial
+                        </span>
+                      </div>
+                      <div className="absolute top-3 right-3 z-10">
+                        <span className="px-2.5 py-1 bg-gray-900/70 backdrop-blur-sm text-white text-[10px] font-bold rounded-md uppercase tracking-wider">
+                          {tutorial.universe}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-black text-lg text-gray-900 mb-3">{tutorial.name}</h3>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          {tutorial.price ? (
+                            <div className="flex items-baseline gap-1.5 flex-wrap">
+                              {tutorial.discount ? (
+                                <>
+                                  <span className="text-sm font-semibold text-gray-400 line-through">${tutorial.price}</span>
+                                  <span className="text-2xl font-extrabold text-purple-500">${tutorial.discount}</span>
+                                </>
+                              ) : (
+                                <span className="text-2xl font-extrabold text-gray-900">${tutorial.price}</span>
+                              )}
+                              <span className="text-xs text-gray-400 font-medium">USD</span>
+                            </div>
+                          ) : (
+                            <span className="text-sm font-semibold text-emerald-500">
+                              {lang === 'es' ? 'Gratis' : 'Free'}
+                            </span>
+                          )}
+                        </div>
+                        <a
+                          href={tutorial.gumroad}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2.5 rounded-full font-bold text-xs text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-200/50 flex items-center gap-2 shrink-0"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          {t.buyTutorial}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Available Packs */}
           <div className="mb-16">

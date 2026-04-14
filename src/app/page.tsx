@@ -15,13 +15,17 @@ export default function Home() {
   const f = messages[lang].home.features;
   const [recentPrompts, setRecentPrompts] = useState<Prompt[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [latestTutorial, setLatestTutorial] = useState<Prompt | null>(null);
 
   useEffect(() => {
     fetch('/api/prompts')
       .then(res => res.ok ? res.json() : [])
       .then((prompts: Prompt[]) => {
-        const recent = prompts.filter(p => !p.pack).reverse().slice(0, 6);
+        const recent = prompts.filter(p => !p.pack && !p.videoTutorial).reverse().slice(0, 6);
         setRecentPrompts(recent);
+        // Latest video tutorial (last one = most recent)
+        const tutorials = prompts.filter(p => !!p.videoTutorial);
+        if (tutorials.length > 0) setLatestTutorial(tutorials[tutorials.length - 1]);
       })
       .catch(() => {});
 
@@ -35,6 +39,87 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b from-pink-50/50 via-white to-purple-50/30">
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Latest Video Tutorial Section */}
+      {latestTutorial && (
+        <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="inline-block px-4 py-1.5 bg-purple-100 text-purple-600 rounded-full text-xs font-bold mb-4 border border-purple-200">🎬 Tutorial</span>
+            <h2 className="text-4xl md:text-5xl font-black mb-4">
+              <span className="bg-gradient-to-r from-purple-500 via-pink-400 to-rose-500 bg-clip-text text-transparent">
+                {t.latestTutorialTitle}
+              </span>
+            </h2>
+            <p className="text-base text-gray-500 max-w-2xl mx-auto">
+              {t.latestTutorialDesc}
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto">
+            <div className="group bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-md hover:shadow-2xl hover:shadow-purple-100/60 transition-all duration-300 hover:-translate-y-1 border border-purple-100">
+              <div className="relative w-full aspect-video overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50">
+                {latestTutorial.imagen ? (
+                  <img
+                    src={latestTutorial.imagen}
+                    alt={latestTutorial.nombre}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="text-6xl">🎬</div>
+                  </div>
+                )}
+                <div className="absolute top-4 left-4 z-10">
+                  <span className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-black rounded-full uppercase tracking-wider shadow-lg">
+                    🎬 Video Tutorial
+                  </span>
+                </div>
+                <div className="absolute top-4 right-4 z-10">
+                  <span className="px-3 py-1.5 bg-gray-900/70 backdrop-blur-sm text-white text-xs font-bold rounded-md uppercase tracking-wider">
+                    {latestTutorial.universo}
+                  </span>
+                </div>
+              </div>
+              <div className="p-6 sm:p-8">
+                <h3 className="font-black text-xl sm:text-2xl text-gray-900 mb-4">{latestTutorial.nombre}</h3>
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    {latestTutorial.precio ? (
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        {latestTutorial.descuento ? (
+                          <>
+                            <span className="text-base font-semibold text-gray-400 line-through">${latestTutorial.precio}</span>
+                            <span className="text-3xl font-extrabold text-purple-500">${latestTutorial.descuento}</span>
+                          </>
+                        ) : (
+                          <span className="text-3xl font-extrabold text-gray-900">${latestTutorial.precio}</span>
+                        )}
+                        <span className="text-sm text-gray-400 font-medium">USD</span>
+                      </div>
+                    ) : (
+                      <span className="text-lg font-semibold text-emerald-500">
+                        {lang === 'es' ? 'Gratis' : 'Free'}
+                      </span>
+                    )}
+                  </div>
+                  <a
+                    href={latestTutorial.gumroad}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-6 py-3 rounded-full font-bold text-sm text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-200/50 flex items-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {t.latestTutorialBuy}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Recent Prompts Section */}
       {recentPrompts.length > 0 && (
