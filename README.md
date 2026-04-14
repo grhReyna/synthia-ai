@@ -16,3 +16,4 @@ npm run dev
 - Tailwind CSS
 - next-intl (bilingüe)
 - Zustand (estado)
+-
