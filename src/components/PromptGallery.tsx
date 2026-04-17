@@ -22,8 +22,8 @@ export default function PromptGallery({ prompts }: PromptGalleryProps) {
   const { toggleLike, getLikeCount, isLiked, likes } = useLikes();
 
   // Split prompts from packs
-  const regularPrompts = useMemo(() => prompts.filter(p => !p.pack), [prompts]);
-  const packPrompts = useMemo(() => prompts.filter(p => !!p.pack), [prompts]);
+  const regularPrompts = useMemo(() => prompts.filter(p => !p.pack && !p.videoTutorial), [prompts]);
+  const packPrompts = useMemo(() => prompts.filter(p => !!p.pack && !p.videoTutorial), [prompts]);
 
   // Group pack prompts by pack name
   const packGroups = useMemo(() => {
