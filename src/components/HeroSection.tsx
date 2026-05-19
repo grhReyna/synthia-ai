@@ -58,11 +58,11 @@ export default function HeroSection() {
             {/* Stats */}
             <div className="grid grid-cols-2 gap-4 py-3 w-fit text-sm">
               <div className="text-center px-4 py-2 bg-white/60 rounded-2xl border border-pink-100 shadow-sm">
-                <p className="text-xl font-black text-pink-500">3500+</p>
+                <p className="text-xl font-black text-pink-500">5000+</p>
                 <p className="text-[10px] text-gray-500 mt-0.5 font-semibold uppercase tracking-wider">{t.stats.followers}</p>
               </div>
               <div className="text-center px-4 py-2 bg-white/60 rounded-2xl border border-pink-100 shadow-sm">
-                <p className="text-xl font-black text-pink-500">60K+</p>
+                <p className="text-xl font-black text-pink-500">90K+</p>
                 <p className="text-[10px] text-gray-500 mt-0.5 font-semibold uppercase tracking-wider">{t.stats.likes}</p>
               </div>
             </div>
