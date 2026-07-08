@@ -18,7 +18,7 @@ export const messages = {
       description: "Descubre los prompts más realistas y creativos para IA. Transforma tus visiones en arte épico con técnicas probadas por expertos.",
       button1: "🛍️ Comprar Packs",
       button2: "✨ Ver Prompts Gratis",
-      stats: { followers: "Seguidores", likes: "Likes" },
+      stats: { followers: "Seguidores on TikTok", likes: "Likes" },
     },
     home: {
       methodBadge: "✨ Nuestra metodología",
